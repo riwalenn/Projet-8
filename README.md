@@ -1,8 +1,6 @@
-# Projet-7 (BileMo)
+# Projet-8 (Todo & Co)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a9796cbb1b5045a2a71674dcf3f2edc2)](https://app.codacy.com/gh/riwalenn/Projet-7?utm_source=github.com&utm_medium=referral&utm_content=riwalenn/Projet-7&utm_campaign=Badge_Grade_Settings)
-
-EN - Projet n°7 created for OpenClassrooms and Back-end Developpeur Path
+EN - Projet n°8 created for OpenClassrooms and Back-end Developpeur Path
 
 ## Built With
 *   PHP 7.4.9
