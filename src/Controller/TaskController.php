@@ -31,8 +31,19 @@ class TaskController extends AbstractController
     public function list(): Response
     {
         return $this->render('task/list.html.twig', [
-            'tasks' => $this->repository->findAll()
+            'tasks' => $this->repository->findBy(["isDone" => false])
         ]);
+    }
+
+    /**
+     * @Route("/tasks/done", name="task_done_list")
+     *
+     */
+    public function isDoneList()
+    {
+        return $this->render('task/list.html.twig', [
+            'tasks' => $this->repository->findBy(["isDone" => true])
+            ]);
     }
 
     /**
@@ -44,12 +55,11 @@ class TaskController extends AbstractController
     public function createTask(Request $request): Response
     {
         $task = new Task();
-        $user = $this->getUser();
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $task->setUser($user)
+            $task->setUser($this->getUser())
                 ->setIsDone(0)
                 ->setCreatedAt(new \DateTime());
             $this->manager->persist($task);
