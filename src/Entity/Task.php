@@ -114,4 +114,9 @@ class Task
         $this->user = $user;
         return $this;
     }
+
+    public function toggle($flag)
+    {
+        $this->isDone = $flag;
+    }
 }
