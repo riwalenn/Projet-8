@@ -2,7 +2,7 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     encoders:
         App\Entity\User:
-            algorithm: bcrypt
+            algorithm: auto
     providers:
         in_database:
             entity:
@@ -13,13 +13,11 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: true
+            anonymous: lazy
             provider: in_database
-
-            form_login:
-                login_path: login
-                check_path: login
-
+            guard:
+                authenticators:
+                    -  App\Security\LoginFormAuthenticator
             logout:
                 path: logout
                 target: homepage
@@ -33,7 +31,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/users, roles: ROLE_ADMIN }
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }
 
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER]
