@@ -2,18 +2,18 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     encoders:
         App\Entity\User:
-            algorithm: auto
+            algorithm: bcrypt
     providers:
         in_database:
             entity:
-                class: App\Entity\user
+                class: App\Entity\User
                 property: username
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: lazy
+            anonymous: ~
             provider: in_database
             guard:
                 authenticators:
