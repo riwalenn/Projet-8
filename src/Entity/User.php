@@ -113,7 +113,7 @@ class User implements UserInterface
 
     public function getSalt()
     {
-        // TODO: Implement getSalt() method.
+        return null;
     }
 
     public function eraseCredentials()

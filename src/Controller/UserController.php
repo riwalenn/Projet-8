@@ -49,10 +49,13 @@ class UserController extends AbstractController
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
+        dump($form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $this->encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
+            $role = array($form->get('roles')->getData());
+            $user->setRoles($role);
 
             $this->manager->persist($user);
             $this->manager->flush();
