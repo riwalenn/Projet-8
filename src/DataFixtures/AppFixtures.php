@@ -84,6 +84,7 @@ class AppFixtures extends Fixture
 
     public function loadAdminuser()
     {
+        $faker = Factory::create('fr_FR');
         $user = new User();
         $user->setUsername("admin")
             ->setEmail("admin@gmail.com")
@@ -91,17 +92,38 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_ADMIN']);
         $this->manager->persist($user);
 
+        for ($i = 0; $i < 5; $i++) {
+            $task = new Task();
+            $task->setTitle($faker->sentence(4, true))
+                ->setContent($faker->paragraph(2))
+                ->setCreatedAt($faker->dateTimeBetween('- 2 months'))
+                ->setIsDone($faker->boolean)
+                ->setUser($user);;
+            $this->manager->persist($task);
+        }
+
         $this->manager->flush();
     }
 
     public function loadRoleUser()
     {
+        $faker = Factory::create('fr_FR');
         $user = new User();
         $user->setUsername("user")
             ->setEmail("user@gmail.com")
             ->setPassword($this->passwordEncoder->encodePassword($user, "user"))
             ->setRoles(['ROLE_USER']);
         $this->manager->persist($user);
+
+        for ($i = 0; $i < 5; $i++) {
+            $task = new Task();
+            $task->setTitle($faker->sentence(4, true))
+                ->setContent($faker->paragraph(2))
+                ->setCreatedAt($faker->dateTimeBetween('- 2 months'))
+                ->setIsDone($faker->boolean)
+                ->setUser($user);;
+            $this->manager->persist($task);
+        }
 
         $this->manager->flush();
     }

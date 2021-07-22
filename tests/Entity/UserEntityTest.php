@@ -79,11 +79,6 @@ class UserEntityTest extends KernelTestCase
         $this->assertHasErrors($this->getEntity()->setPassword(''), 1);
     }
 
-    public function testInvalidBlankRoles()
-    {
-        $this->assertHasErrors($this->getEntity()->setRoles([]), 1);
-    }
-
     public function testTypeArrayRoles()
     {
         $this->assertIsArray($this->getEntity()->getRoles());
@@ -115,10 +110,10 @@ class UserEntityTest extends KernelTestCase
 
     public function testRemoveAllUserTasks()
     {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'mevrard@voila.fr']);
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'user@gmail.com']);
         $task = new Task();
         $task->setUser($user);
-        $this->assertCount(3, $user->removeTask($task)->getTasks());
+        $this->assertCount(5, $user->removeTask($task)->getTasks());
     }
 
     protected function tearDown(): void
