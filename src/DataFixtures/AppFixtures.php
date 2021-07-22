@@ -21,8 +21,19 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager)
     {
-        $faker = Factory::create('fr_FR');
         $this->manager = $manager;
+        $this->loadTaskNotAssigned();
+        $this->loadUserAndTask();
+        $this->loadAnonymousUser();
+        $this->loadAdminuser();
+        $this->loadRoleUser();
+
+        $manager->flush();
+    }
+
+    public function loadUserAndTask()
+    {
+        $faker = Factory::create('fr_FR');
         for ($i = 0; $i < 4; $i++) {
             $user = new User();
             $user->setUsername($faker->userName)
@@ -42,6 +53,56 @@ class AppFixtures extends Fixture
                 $this->manager->persist($task);
             }
         }
+        $this->manager->flush();
+    }
+
+    public function loadTaskNotAssigned()
+    {
+        $faker = Factory::create('fr_FR');
+        for ($i = 0; $i < 5; $i++) {
+            $task = new Task();
+            $task->setTitle($faker->sentence(4, true))
+                ->setContent($faker->paragraph(2))
+                ->setCreatedAt($faker->dateTimeBetween('- 2 months'))
+                ->setIsDone($faker->boolean);
+            $this->manager->persist($task);
+        }
+        $this->manager->flush();
+    }
+
+    public function loadAnonymousUser()
+    {
+        $user = new User();
+        $user->setUsername("anonyme")
+            ->setEmail("anonyme@gmail.com")
+            ->setPassword($this->passwordEncoder->encodePassword($user, "anonyme"))
+            ->setRoles(['ROLE_USER']);
+        $this->manager->persist($user);
+
+        $this->manager->flush();
+    }
+
+    public function loadAdminuser()
+    {
+        $user = new User();
+        $user->setUsername("admin")
+            ->setEmail("admin@gmail.com")
+            ->setPassword($this->passwordEncoder->encodePassword($user, "admin"))
+            ->setRoles(['ROLE_ADMIN']);
+        $this->manager->persist($user);
+
+        $this->manager->flush();
+    }
+
+    public function loadRoleUser()
+    {
+        $user = new User();
+        $user->setUsername("user")
+            ->setEmail("user@gmail.com")
+            ->setPassword($this->passwordEncoder->encodePassword($user, "user"))
+            ->setRoles(['ROLE_USER']);
+        $this->manager->persist($user);
+
         $this->manager->flush();
     }
 }
