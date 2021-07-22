@@ -31,7 +31,8 @@ class TaskController extends AbstractController
     public function list(): Response
     {
         return $this->render('task/list.html.twig', [
-            'tasks' => $this->repository->findBy(["isDone" => false])
+            'tasks' => $this->repository->findBy(["isDone" => false]),
+            'title' => "Tâches non terminées"
         ]);
     }
 
@@ -42,7 +43,8 @@ class TaskController extends AbstractController
     public function isDoneList()
     {
         return $this->render('task/list.html.twig', [
-            'tasks' => $this->repository->findBy(["isDone" => true])
+            'tasks' => $this->repository->findBy(["isDone" => true]),
+            'title' => "Tâches terminées"
             ]);
     }
 
@@ -123,6 +125,13 @@ class TaskController extends AbstractController
      */
     public function deleteTask(Task $task): RedirectResponse
     {
+        $taskUser = $task->getUser();
+        $user = $this->getUser();
+        if ($user->getUsername() != $taskUser->getUsername() || ($user->getRoles() != "ROLE_ADMIN" && $taskUser->getUsername() == "anonyme")) {
+            $this->addFlash('danger', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
+            return $this->redirectToRoute('task_list');
+        }
+
         $this->manager->remove($task);
         $this->manager->flush();
 

@@ -16,7 +16,7 @@ class UserControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
-    public function testCreateUser()
+    /*public function testCreateUser()
     {
 
     }
@@ -24,7 +24,5 @@ class UserControllerTest extends WebTestCase
     public function testEditUser()
     {
 
-    }
-
-
+    }*/
 }
