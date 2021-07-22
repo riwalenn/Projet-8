@@ -18,11 +18,11 @@ class UserType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, [
-                'label' => "Nom d'utilisateur",
-                'attr' => [
+                'label'     => "Nom d'utilisateur",
+                'attr'      => [
                     'aria-describedby' => 'basic-addon3',
                     'placeholder' => 'Nom d\'utilisateur...',
-                    'class' => 'form-control'
+                    'class'     => 'form-control'
                 ]
             ])
             ->add('password', RepeatedType::class, [
@@ -35,28 +35,30 @@ class UserType extends AbstractType
                     'placeholder' => 'Mot de passe...',
                     'class' => 'form-control'
                 ]],
-                'second_options'    => ['label' => 'Tapez le mot de passe à nouveau',
-                    'attr' => [
+                'second_options'    => [
+                    'label' => 'Tapez le mot de passe à nouveau',
+                    'attr'  => [
                         'aria-describedby' => 'basic-addon3',
                         'placeholder' => 'Mot de passe...',
                         'class' => 'form-control'
                     ]]
             ])
-            ->add('email', EmailType::class, ['label' => 'Adresse email',
-                'attr' => [
+            ->add('email', EmailType::class, [
+                'label'     => 'Adresse email',
+                'attr'      => [
                     'aria-describedby' => 'basic-addon3',
                     'placeholder' => 'Email de l\'utilisateur...',
-                    'class' => 'form-control'
+                    'class'     => 'form-control'
                 ]])
             ->add('roles', ChoiceType::class, [
-                'mapped' => false,
-                'label' => 'Rôle',
-                'attr' => [
+                'mapped'    => false,
+                'label'     => 'Rôle',
+                'attr'      => [
                     'aria-describedby' => 'basic-addon3',
-                    'class' => 'form-control'
+                    'class'     => 'form-control'
                 ],
-                'choices'  => [
-                    'Utilisateur' => 'ROLE_USER',
+                'choices'   => [
+                    'Utilisateur'    => 'ROLE_USER',
                     'Administrateur' => 'ROLE_ADMIN'
                 ],
             ])
