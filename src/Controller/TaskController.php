@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -63,7 +64,7 @@ class TaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $task->setUser($this->getUser())
                 ->setIsDone(0)
-                ->setCreatedAt(new \DateTime());
+                ->setCreatedAt(new DateTime());
             $this->manager->persist($task);
             $this->manager->flush();
 
@@ -72,7 +73,6 @@ class TaskController extends AbstractController
             return $this->redirectToRoute('task_list');
         }
         return $this->render('task/create.html.twig', [
-            'title' => 'Ajouter une tâche',
             'form' => $form->createView()
         ]);
      }
@@ -91,11 +91,10 @@ class TaskController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->manager->flush();
-            $this->addFlash('success', 'La tâche a bien été modifiée.');
+            $this->addFlash('success', sprintf('La tâche %s a bien été modifiée.', $task->getTitle()));
             return $this->redirectToRoute('task_list');
         }
         return $this->render('task/edit.html.twig', [
-            'title' => 'Modifier une tâche',
             'form' => $form->createView(),
             'task' => $task
         ]);
@@ -112,8 +111,11 @@ class TaskController extends AbstractController
         $task->toggle(!$task->getIsDone());
         $this->manager->flush();
 
-        $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
-
+        if ($task->toggle($task->getIsDone()) == true) {
+            $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme terminée.', $task->getTitle()));
+        } else {
+            $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme non terminée.', $task->getTitle()));
+        }
         return $this->redirectToRoute('task_list');
     }
 
@@ -125,17 +127,15 @@ class TaskController extends AbstractController
      */
     public function deleteTask(Task $task): RedirectResponse
     {
-        $taskUser = $task->getUser();
-        $user = $this->getUser();
-        if ($user->getUsername() != $taskUser->getUsername() || ($user->getRoles() != "ROLE_ADMIN" && $taskUser->getUsername() == "anonyme")) {
-            $this->addFlash('danger', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
+        if ($this->getUser() == $task->getUser() || $this->getUser()->getRoles() == "ROLE_ADMIN") {
+            $this->manager->remove($task);
+            $this->manager->flush();
+
+            $this->addFlash('success', sprintf('La tâche %s a bien été supprimée.', $task->getTitle()));
             return $this->redirectToRoute('task_list');
         }
 
-        $this->manager->remove($task);
-        $this->manager->flush();
-
-        $this->addFlash('success', 'La tâche a bien été supprimée');
+        $this->addFlash('error', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
         return $this->redirectToRoute('task_list');
     }
 }
