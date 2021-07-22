@@ -92,7 +92,7 @@ class TaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->manager->flush();
             $this->addFlash('success', sprintf('La tâche %s a bien été modifiée.', $task->getTitle()));
-            return $this->redirectToRoute('task_list');
+            return $this->redirectToRoute('task_done_list');
         }
         return $this->render('task/edit.html.twig', [
             'form' => $form->createView(),
@@ -111,12 +111,11 @@ class TaskController extends AbstractController
         $task->toggle(!$task->getIsDone());
         $this->manager->flush();
 
-        if ($task->toggle($task->getIsDone()) == true) {
-            $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme terminée.', $task->getTitle()));
-        } else {
-            $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme non terminée.', $task->getTitle()));
-        }
-        return $this->redirectToRoute('task_list');
+        $message = ($task->getIsDone() == true) ? "La tâche " . $task->getTitle() . " a bien été marquée comme terminée" : "La tâche " . $task->getTitle() . " a bien été marquée comme non terminée";
+
+        $this->addFlash('success', $message);
+
+        return $this->redirectToRoute('task_done_list');
     }
 
     /**
@@ -132,10 +131,10 @@ class TaskController extends AbstractController
             $this->manager->flush();
 
             $this->addFlash('success', sprintf('La tâche %s a bien été supprimée.', $task->getTitle()));
-            return $this->redirectToRoute('task_list');
+            return $this->redirectToRoute('task_done_list');
         }
 
         $this->addFlash('error', 'Vous n\'avez pas les droits pour supprimer cette tâche.');
-        return $this->redirectToRoute('task_list');
+        return $this->redirectToRoute('task_done_list');
     }
 }
