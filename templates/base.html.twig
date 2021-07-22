@@ -20,7 +20,7 @@
 <nav class="navbar navbar-light navbar-fixed-top" style="background-color: #e3f2fd;" role="navigation">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">To Do List app</a>
+            <a class="navbar-brand" href="{{ path('homepage') }}">To Do List app</a>
             <img src="{{ asset('img/Logo_OpenClassrooms.png') }}" alt="OpenClassrooms" />
         </div>
     </div>
@@ -28,13 +28,22 @@
 <!-- Page Content -->
 <div class="container">
     <div class="row">
-        <a href="{{ path('user_create') }}" class="btn btn-primary">Créer un utilisateur</a>
-        {% if app.user %}
-            <a href="{{ path('logout') }}" class="pull-right btn btn-danger">Se déconnecter</a>
-        {% endif %}
-        {% if not app.user and 'login' != app.request.attributes.get('_route') %}
-            <a href="{{ path('login') }}" class="btn btn-success">Se connecter</a>
-        {% endif %}
+        <div class="col-md-12">
+            {% if is_granted('ROLE_ADMIN') %}
+                {% if 'user_create' != app.request.attributes.get('_route') %}
+                    <a href="{{ path('user_create') }}" class="btn btn-success">Créer un utilisateur</a>
+                {% endif %}
+                {% if 'user_list' != app.request.attributes.get('_route') %}
+                    <a href="{{ path('user_list') }}" class="btn btn-info">Liste des utilisateurs</a>
+                {% endif %}
+            {% endif %}
+            {% if app.user %}
+                <a href="{{ path('logout') }}" class="pull-right btn btn-danger">Se déconnecter</a>
+            {% endif %}
+            {% if not app.user and 'login' != app.request.attributes.get('_route') %}
+                <a href="{{ path('login') }}" class="btn btn-success pull-right">Se connecter</a>
+            {% endif %}
+        </div>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -52,12 +61,7 @@
             {% block header_img %}<img class="slide-image" src="{{ asset('img/todolist_homepage.jpg') }}" alt="todo list">{% endblock %}
         </div>
     </div>
-    <br />
-    <div class="row">
-        <div class="col-md-12">
-            {% block body %}{% endblock %}
-        </div>
-    </div>
+   {% block body %}{% endblock %}
 </div>
 <!-- /.container -->
 <div class="container">

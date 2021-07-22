@@ -92,14 +92,12 @@ class UserEntityTest extends KernelTestCase
     public function testUniqueUsername()
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => 'user']);
-        $this->assertTrue($user->getUsername() == "user", "Cet username n'existe pas.");
         $this->assertFalse($user->getUsername() !== "user", "Cet username existe déjà.");
     }
 
     public function testUniqueEmail()
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'user@gmail.com']);
-        $this->assertTrue($user->getEmail() == "user@gmail.com", "L'email n'existe pas.");
         $this->assertFalse($user->getEmail() !== "user@gmail.com", "L'email existe déjà.");
     }
 
