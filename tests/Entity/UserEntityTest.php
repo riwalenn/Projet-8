@@ -5,6 +5,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\Task;
 use App\Entity\User;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 
@@ -18,7 +19,7 @@ class UserEntityTest extends KernelTestCase
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
     }
 
-    public function assertHasErrors(User $user, int $number = 0)
+    protected function assertHasErrors(User $user, int $number = 0)
     {
         self::bootKernel();
         $errors = self::$container->get('validator')->validate($user);
@@ -30,7 +31,7 @@ class UserEntityTest extends KernelTestCase
         $this->assertCount($number, $errors, implode(', ', $messages));
     }
 
-    public function getEntity(): User
+    protected function getEntity(): User
     {
         return (new User())
             ->setUsername('test')
@@ -43,7 +44,7 @@ class UserEntityTest extends KernelTestCase
 
     public function testValidEntity()
     {
-        $this->assertHasErrors($this->getEntity(), 0);
+        $this->assertHasErrors($this->getEntity());
     }
 
     public function testInstanceOfEntity()
@@ -104,7 +105,7 @@ class UserEntityTest extends KernelTestCase
             ->setTitle('Id qui illo vitae')
             ->setContent("Dolores necessitatibus sed veniam.")
             ->setIsDone(1)
-            ->setCreatedAt(new \DateTime());
+            ->setCreatedAt(new DateTime());
         $this->assertCount(1, $this->getEntity()->addTask($task)->getTasks());
     }
 
