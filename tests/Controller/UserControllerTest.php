@@ -12,9 +12,44 @@ class UserControllerTest extends WebTestCase
 {
     use NeedLogin;
 
+    const URIS = [
+        'list'          => '/users',
+        'editUser'      => '/users/1/edit',
+        'createUser'    => '/users/create',
+    ];
+
     protected function getEntity($username)
     {
         return self::$container->get('doctrine')->getManager()->getRepository(User::class)->findOneBy(['username' => $username]);
+    }
+
+    /**
+     * @param $uri
+     */
+    protected function loginWithoutCredentials($uri)
+    {
+        $client = static::createClient();
+        $client->request('GET', $uri);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $this->assertResponseRedirects('/login');
+        $client->followRedirect();
+        $this->assertSelectorTextContains('button', 'Se connecter');
+    }
+
+    /**
+     * @param $role
+     * @param $uri
+     * @param int $http_response
+     */
+    protected function loginWithCredentials($role, $uri, int $http_response = Response::HTTP_OK)
+    {
+        $client = static::createClient();
+        $user = $this->getEntity($role);
+        $this->login($client, $user);
+
+        $client->request('GET', $uri);
+
+        $this->assertResponseStatusCodeSame($http_response);
     }
 
     protected function newEntity(): User
@@ -26,68 +61,25 @@ class UserControllerTest extends WebTestCase
             ->setRoles(array('ROLE_USER'));
     }
 
-    public function testListWhithoutCredentials()
+    public function testUrisList()
     {
-        $client = static::createClient();
-        $client->request('GET', '/users');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $this->assertResponseRedirects('/login');
-        $client->followRedirect();
-        $this->assertSelectorTextContains('button', 'Se connecter');
-    }
-
-    public function testListHasUserCredentials()
-    {
-        $client = static::createClient();
-        $user = $this->getEntity('user');
-
-        $this->login($client, $user);
-        $client->request('GET', '/users');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $uris = self::URIS;
+        $this->loginWithoutCredentials($uris["list"]);
+        $this->loginWithCredentials('user', $uris["list"], Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');
-    }
-
-    public function testListHasAdminCredentials()
-    {
-        $client = static::createClient();
-        $user = $this->getEntity('admin');
-
-        $this->login($client, $user);
-        $client->request('GET', '/users');
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->loginWithCredentials('admin', $uris["list"]);
         $this->assertSelectorExists('h1');
     }
 
-    public function testCreateWhithoutCredentials()
+    public function testUrisCreate()
     {
-        $client = static::createClient();
-        $client->request('GET', '/users/create');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $this->assertResponseRedirects('/login');
-        $client->followRedirect();
-        $this->assertSelectorTextContains('button', 'Se connecter');
-    }
-
-    public function testCreateHasUserCredentials()
-    {
-        $client = static::createClient();
-        $user = $this->getEntity('user');
-
-        $this->login($client, $user);
-        $client->request('GET', '/users/create');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $uris = self::URIS;
+        $this->loginWithoutCredentials($uris["createUser"]);
+        $this->loginWithCredentials('user', $uris["createUser"], Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');
-    }
-
-    public function testCreateHasAdminCredentials()
-    {
-        $client = static::createClient();
-        $user = $this->getEntity('admin');
-
-        $this->login($client, $user);
-        $client->request('GET', '/users/create');
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->loginWithCredentials('admin', $uris["createUser"]);
         $this->assertSelectorExists('h1');
+
     }
 
     public function testCreateBadUser()
@@ -102,35 +94,13 @@ class UserControllerTest extends WebTestCase
         $this->assertFalse($user->getEmail() !== "user@gmail.com", "Cet email existe déjà.");
     }
 
-    public function testEditWhithoutCredentials()
+    public function testUrisEdit()
     {
-        $client = static::createClient();
-        $client->request('GET', '/users/' . $this->getEntity('user')->getId() . '/edit');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $this->assertResponseRedirects('/login');
-        $client->followRedirect();
-        $this->assertSelectorTextContains('button', 'Se connecter');
-    }
-
-    public function testEditHasUserCredentials()
-    {
-        $client = static::createClient();
-        $user = $this->getEntity('user');
-
-        $this->login($client, $user);
-        $client->request('GET', '/users/' . $this->getEntity('user')->getId() . '/edit');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $uri = '/users/7/edit';
+        $this->loginWithoutCredentials($uri);
+        $this->loginWithCredentials('user', $uri, Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');
-    }
-
-    public function testEditHasAdminCredentials()
-    {
-        $client = static::createClient();
-        $user = $this->getEntity('admin');
-
-        $this->login($client, $user);
-        $client->request('GET', '/users/' . $this->getEntity('user')->getId() . '/edit');
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->loginWithCredentials('admin', $uri);
         $this->assertSelectorExists('h1');
     }
 }
