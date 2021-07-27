@@ -3,25 +3,25 @@
 
 namespace App\Tests\Entity;
 
-
 use App\Entity\Task;
 use App\Entity\User;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 
 class TaskEntityTest extends KernelTestCase
 {
-    public function getEntity(): Task
+    protected function getEntity(): Task
     {
         return (new Task())
             ->setUser(new User())
             ->setContent("Lorem Ipsum is simply dummy text of the printing and typesetting industry.")
-            ->setCreatedAt(new \DateTime("2021-06-30 18:00:00"))
+            ->setCreatedAt(new DateTime("2021-06-30 18:00:00"))
             ->setTitle("Hello i'm here !")
             ->setIsDone(true);
     }
 
-    public function assertHasErrors(Task $task, int $number = 0)
+    protected function assertHasErrors(Task $task, int $number = 0)
     {
         self::bootKernel();
         $errors = self::$container->get('validator')->validate($task);
