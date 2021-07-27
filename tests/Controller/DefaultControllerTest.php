@@ -18,6 +18,22 @@ class DefaultControllerTest extends WebTestCase
         return self::$container->get('doctrine')->getManager()->getRepository(User::class)->findOneBy(['username' => $username]);
     }
 
+    /**
+     * @param $role
+     * @param $uri
+     * @param int $http_response
+     */
+    protected function LoginWithCredentials($role, $uri, int $http_response = Response::HTTP_OK)
+    {
+        $client = static::createClient();
+        $user = $this->getEntity($role);
+        $this->login($client, $user);
+
+        $client->request('GET', $uri);
+
+        $this->assertResponseStatusCodeSame($http_response);
+    }
+
     public function testIndexWithoutCredentials()
     {
         $client = static::createClient();
@@ -30,12 +46,7 @@ class DefaultControllerTest extends WebTestCase
 
     public function testIndexWithUserCredentials()
     {
-        $client = static::createClient();
-        $user = $this->getEntity('user');
-
-        $this->login($client, $user);
-        $client->request('GET', '/');
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->LoginWithCredentials('user', '/');
 
         $this->assertSelectorTextContains('title', 'To Do List app');
         $this->assertSelectorNotExists('button', 'Créer un utilisateur');
@@ -43,12 +54,7 @@ class DefaultControllerTest extends WebTestCase
 
     public function testIndexWithAdminCredentials()
     {
-        $client = static::createClient();
-        $user = $this->getEntity('admin');
-
-        $this->login($client, $user);
-        $client->request('GET', '/');
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->LoginWithCredentials('admin', '/');
 
         $this->assertSelectorTextContains('.btn.btn-info', 'Liste des utilisateurs');
     }
