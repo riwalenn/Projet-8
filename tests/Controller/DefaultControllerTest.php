@@ -13,9 +13,9 @@ class DefaultControllerTest extends WebTestCase
 {
     use NeedLogin;
 
-    protected function getEntity($user)
+    protected function getEntity($username)
     {
-        return self::$container->get('doctrine')->getManager()->getRepository(User::class)->findOneBy(['username' => $user]);
+        return self::$container->get('doctrine')->getManager()->getRepository(User::class)->findOneBy(['username' => $username]);
     }
 
     public function testIndexWithoutCredentials()
