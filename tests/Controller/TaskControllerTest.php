@@ -105,7 +105,7 @@ class TaskControllerTest extends WebTestCase
         $this->testWithoutCredentials($uris["deleteTask"]);
     }
 
-    /* ATTENTION : suppression en bdd -> réinjecter la bdd après tests */
+    /* ATTENTION : suppression en bdd */
     public function testDeleteWithCredential()
     {
         $client = static::createClient();
@@ -132,7 +132,6 @@ class TaskControllerTest extends WebTestCase
         $this->assertSelectorExists('.alert.alert-danger');
     }
 
-    //TODO::associer les tâches nulles à anonyme
     public function testDeleteAnonymousWithCredential()
     {
         $client = static::createClient();
@@ -143,24 +142,4 @@ class TaskControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
-
-    /*
-        POUR TESTS USER
-
-        INSERT INTO `task` (`id`, `user_id`, `created_at`, `title`, `content`, `is_done`) VALUES
-        (23, 7, '2021-07-04 06:51:21', 'Consectetur atque nam quam tempora.', 'Impedit blanditiis id deserunt veritatis. At illo asperiores ea ad. Omnis quibusdam ut fugit aut.', 1),
-        (24, 7, '2021-06-16 21:36:54', 'Quibusdam aut inventore voluptatum molestias.', 'Quis numquam ipsa dicta optio temporibus eaque dignissimos sunt. Repellat iste necessitatibus magni qui perspiciatis ut consequuntur voluptatem.', 0),
-        (25, 7, '2021-07-18 03:15:24', 'Sed odio ipsam rerum sapiente distinctio.', 'Ea eum eos possimus sit dolorem harum magnam. Et ipsa consectetur dolores id dolorem voluptate.', 0),
-        (26, 7, '2021-06-06 06:29:57', 'Dolorum eos perferendis unde est.', 'Rerum quis vero amet perspiciatis libero distinctio. Et aut esse consequatur at est ut.', 1),
-        (27, 7, '2021-06-19 19:05:39', 'Quod ea rerum consequatur asperiores.', 'Magnam nam sapiente culpa eligendi. Aut iure vel id magnam architecto ex natus nostrum.', 0);
-
-        POUR TESTS ANONYME
-
-        INSERT INTO `task` (`id`, `user_id`, `created_at`, `title`, `content`, `is_done`) VALUES
-        (1, NULL, '2021-06-05 18:52:07', 'Tenetur fugit quia voluptate doloremque dolor.', 'Excepturi voluptates doloribus sunt dolor et ut quo. Non cupiditate facilis dolorum autem. Cumque illum reprehenderit optio quo et asperiores enim.', 1),
-        (2, NULL, '2021-06-10 09:08:21', 'Excepturi consequuntur distinctio.', 'Omnis dolorem culpa et. Officia omnis dicta fugit laudantium. Minus et atque corrupti officia.', 0),
-        (3, NULL, '2021-06-17 11:49:58', 'Libero magnam dolorem nemo corrupti.', 'Voluptatem qui tenetur a reprehenderit nihil explicabo sapiente consequatur. Temporibus tempora illo maiores eum ut.', 0),
-        (4, NULL, '2021-07-14 21:59:36', 'Ut aut amet quis ullam.', 'Reiciendis pariatur quia deleniti dolor autem ad voluptatem. Sit dolorem rerum ducimus assumenda voluptate ex incidunt. Tempore soluta ut iste nisi.', 0),
-        (5, NULL, '2021-07-12 02:47:14', 'Qui aliquid doloremque cum.', 'Cumque maiores temporibus quos quia. Reprehenderit enim dolor unde aut. Vel ut repellat illum et molestias.', 1);
-     */
 }

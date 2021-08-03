@@ -37,14 +37,14 @@ class UserControllerTest extends WebTestCase
     }
 
     /**
-     * @param $role
+     * @param $username
      * @param $uri
      * @param int $http_response
      */
-    protected function loginWithCredentials($role, $uri, int $http_response = Response::HTTP_OK)
+    protected function loginWithCredentials($username, $uri, int $http_response = Response::HTTP_OK)
     {
         $client = static::createClient();
-        $user = $this->getEntity($role);
+        $user = $this->getEntity($username);
         $this->login($client, $user);
 
         $client->request('GET', $uri);
@@ -96,7 +96,9 @@ class UserControllerTest extends WebTestCase
 
     public function testUrisEdit()
     {
-        $uri = '/users/7/edit';
+        /*$user = $this->getEntity('anonyme');
+        die(dump($user));*/
+        $uri = '/users/9/edit'; //Todo::A modifier
         $this->loginWithoutCredentials($uri);
         $this->loginWithCredentials('user', $uri, Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');

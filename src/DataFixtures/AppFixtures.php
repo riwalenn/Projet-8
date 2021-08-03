@@ -34,7 +34,7 @@ class AppFixtures extends Fixture
     public function loadUserAndTask()
     {
         $faker = Factory::create('fr_FR');
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 1; $i < 5; $i++) {
             $user = new User();
             $user->setUsername($faker->userName)
                 ->setEmail($faker->email)
@@ -72,12 +72,23 @@ class AppFixtures extends Fixture
 
     public function loadAnonymousUser()
     {
+        $faker = Factory::create('fr_FR');
         $user = new User();
         $user->setUsername("anonyme")
             ->setEmail("anonyme@gmail.com")
             ->setPassword($this->passwordEncoder->encodePassword($user, "anonyme"))
             ->setRoles(['ROLE_USER']);
         $this->manager->persist($user);
+
+        for ($i = 0; $i < 5; $i++) {
+            $task = new Task();
+            $task->setTitle($faker->sentence(4, true))
+                ->setContent($faker->paragraph(2))
+                ->setCreatedAt($faker->dateTimeBetween('- 2 months'))
+                ->setIsDone($faker->boolean)
+                ->setUser($user);;
+            $this->manager->persist($task);
+        }
 
         $this->manager->flush();
     }
