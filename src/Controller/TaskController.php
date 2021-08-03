@@ -111,6 +111,7 @@ class TaskController extends AbstractController
         $task->toggle(!$task->getIsDone());
         $this->manager->flush();
 
+        //if true then get title "it's done" else get title "not done"
         $message = ($task->getIsDone() == true) ? "La tâche " . $task->getTitle() . " a bien été marquée comme terminée" : "La tâche " . $task->getTitle() . " a bien été marquée comme non terminée";
 
         $this->addFlash('success', $message);

@@ -11,7 +11,6 @@ use Symfony\Component\Security\Http\Authorization\AccessDeniedHandlerInterface;
 
 class AccessDeniedHandler implements AccessDeniedHandlerInterface
 {
-
     public function handle(Request $request, AccessDeniedException $accessDeniedException)
     {
         if ($request->isXmlHttpRequest()) {

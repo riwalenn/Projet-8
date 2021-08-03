@@ -49,7 +49,7 @@ class User implements UserInterface
     private $roles = [];
 
     /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="user", orphanRemoval=true, cascade={"persist"})
      */
     private $tasks;
 
@@ -118,7 +118,7 @@ class User implements UserInterface
 
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        // eraseCredentials() method.
     }
 
     /**
