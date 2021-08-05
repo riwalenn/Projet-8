@@ -53,6 +53,11 @@ class TaskEntityTest extends KernelTestCase
         $this->assertObjectHasAttribute('isDone', $this->getEntity());
     }
 
+    public function testGetCreatedAt()
+    {
+        $this->assertInstanceOf(\DateTime::class, $this->getEntity()->getCreatedAt());
+    }
+
     public function testTypeStringTitle()
     {
         $this->assertIsString($this->getEntity()->getTitle());

@@ -127,7 +127,7 @@ class TaskController extends AbstractController
      */
     public function deleteTask(Task $task): RedirectResponse
     {
-        if (($this->getUser() == $task->getUser()) || ($this->getUser()->getRoles() == "ROLE_ADMIN" && $task->getUser()->getUsername() == "anonyme")) {
+        if (($this->getUser() == $task->getUser()) || $this->isGranted('ROLE_ADMIN')) {
             $this->manager->remove($task);
             $this->manager->flush();
 

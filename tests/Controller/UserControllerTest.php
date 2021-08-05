@@ -14,7 +14,7 @@ class UserControllerTest extends WebTestCase
 
     const URIS = [
         'list'          => '/users',
-        'editUser'      => '/users/1/edit',
+        'editUser'      => '/users/9/edit',
         'createUser'    => '/users/create',
     ];
 

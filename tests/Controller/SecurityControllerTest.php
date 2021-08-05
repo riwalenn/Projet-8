@@ -5,12 +5,38 @@ namespace App\Tests\Controller;
 
 use App\Entity\User;
 use App\Tests\NeedLogin;
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecurityControllerTest extends WebTestCase
 {
     use NeedLogin;
+
+    /**
+     * @throws Exception
+     */
+    protected function setCommand($string): int
+    {
+        $kernel = static::createKernel(['APP_ENV' => 'test']);
+        $application =new Application($kernel);
+        $application->setAutoExit(false);
+        return $application->run(new StringInput(sprintf('%s --quiet', $string)));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function setUp(): void
+    {
+        $this->setCommand('doctrine:database:drop --force');
+        $this->setCommand('doctrine:database:create');
+        $this->setCommand('doctrine:schema:create');
+        $this->setCommand('doctrine:fixtures:load');
+        $this->setCommand('app:link-anonymous ');
+    }
 
     protected function getEntity($username)
     {
@@ -94,5 +120,15 @@ class SecurityControllerTest extends WebTestCase
         $this->login($client, $user);
         $client->request('GET', '/logout');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function tearDown(): void
+    {
+        $this->setCommand('doctrine:database:drop --force');
+
+        parent::tearDown();
     }
 }

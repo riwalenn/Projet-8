@@ -6,17 +6,36 @@ namespace App\Tests\Entity;
 use App\Entity\Task;
 use App\Entity\User;
 use DateTime;
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Validator\ConstraintViolation;
 
 class UserEntityTest extends KernelTestCase
 {
     private $entityManager;
 
+    /**
+     * @throws Exception
+     */
+    protected function setCommand($string): int
+    {
+        $kernel = static::createKernel(['APP_ENV' => 'test']);
+        $application = new Application($kernel);
+        $application->setAutoExit(false);
+        return $application->run(new StringInput(sprintf('%s --quiet', $string)));
+    }
+
     protected function setUp(): void
     {
+        $this->setCommand('doctrine:database:drop --force');
+        $this->setCommand('doctrine:database:create');
+        $this->setCommand('doctrine:schema:create');
+        $this->setCommand('doctrine:fixtures:load');
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->setCommand('app:link-anonymous ');
     }
 
     protected function assertHasErrors(User $user, int $number = 0)
@@ -117,8 +136,13 @@ class UserEntityTest extends KernelTestCase
         $this->assertCount(5, $user->removeTask($task)->getTasks());
     }
 
+    /**
+     * @throws Exception
+     */
     protected function tearDown(): void
     {
+        $this->setCommand('doctrine:database:drop --force');
+
         parent::tearDown();
 
         // doing this is recommended to avoid memory leaks
