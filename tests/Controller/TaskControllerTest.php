@@ -3,6 +3,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\Task;
 use App\Entity\User;
 use App\Tests\NeedLogin;
 use Doctrine\Persistence\ObjectManager;
@@ -37,6 +38,11 @@ class TaskControllerTest extends WebTestCase
     protected function getEntity($username)
     {
         return self::$container->get('doctrine')->getManager()->getRepository(User::class)->findOneBy(['username' => $username]);
+    }
+
+    protected function getTasksAnonymousEntity()
+    {
+        return self::$container->get('doctrine')->getManager()->getRepository(Task::class)->findBy(['user' => $this->getEntity('anonyme')]);
     }
 
     /**
@@ -139,14 +145,13 @@ class TaskControllerTest extends WebTestCase
         $this->testWithoutCredentials($uris["deleteTask"]);
     }
 
-    /* ATTENTION : suppression en bdd */
     public function testDeleteWithCredential()
     {
         $client = static::createClient();
         $user = $this->getEntity('user');
         $this->login($client, $user);
 
-        $client->request('DELETE', '/tasks/15/delete');
+        $client->request('GET', '/tasks/15/delete');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
@@ -155,24 +160,30 @@ class TaskControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $user = $this->getEntity('user');
+        $tasks = $this->getTasksAnonymousEntity();
         $this->login($client, $user);
 
-        $client->request('DELETE', '/tasks/3/delete');
+        foreach ($tasks as $task) {
+            $client->request('GET', '/tasks/' . $task->getId() . '/delete');
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $this->assertResponseRedirects('/tasks/done');
-        $client->followRedirect();
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
-        $this->assertSelectorExists('.alert.alert-danger');
+            $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+            $this->assertResponseRedirects('/tasks/done');
+            $client->followRedirect();
+            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+            $this->assertSelectorExists('.alert.alert-danger');
+        }
     }
 
     public function testDeleteAnonymousWithCredential()
     {
         $client = static::createClient();
+        $tasks = $this->getTasksAnonymousEntity();
         $user = $this->getEntity('admin');
         $this->login($client, $user);
-        $client->request('DELETE', '/tasks/3/delete');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        foreach ($tasks as $task) {
+            $client->request('GET', '/tasks/' . $task->getId() . '/delete');
+            $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        }
     }
 
     /**
