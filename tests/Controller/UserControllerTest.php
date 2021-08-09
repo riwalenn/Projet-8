@@ -5,7 +5,11 @@ namespace App\Tests\Controller;
 
 use App\Entity\User;
 use App\Tests\NeedLogin;
+use Doctrine\Persistence\ObjectManager;
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserControllerTest extends WebTestCase
@@ -14,9 +18,13 @@ class UserControllerTest extends WebTestCase
 
     const URIS = [
         'list'          => '/users',
-        'editUser'      => '/users/9/edit',
         'createUser'    => '/users/create',
     ];
+
+    /**
+     * @var ObjectManager
+     */
+    protected $entityManager;
 
     protected function getEntity($username)
     {
@@ -61,6 +69,31 @@ class UserControllerTest extends WebTestCase
             ->setRoles(array('ROLE_USER'));
     }
 
+    /**
+     * @throws Exception
+     */
+    protected function setCommand($string): int
+    {
+        $kernel = static::createKernel(['APP_ENV' => 'test']);
+        $application =new Application($kernel);
+        $application->setAutoExit(false);
+        return $application->run(new StringInput(sprintf('%s --quiet', $string)));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function setUp(): void
+    {
+        $this->setCommand('doctrine:database:drop --force');
+        $this->setCommand('doctrine:database:create');
+        $this->setCommand('doctrine:schema:create');
+        $this->setCommand('doctrine:fixtures:load');
+        $kernel = self::bootKernel();
+        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->setCommand('app:link-anonymous ');
+    }
+
     public function testUrisList()
     {
         $uris = self::URIS;
@@ -96,9 +129,8 @@ class UserControllerTest extends WebTestCase
 
     public function testUrisEdit()
     {
-        /*$user = $this->getEntity('anonyme');
-        die(dump($user));*/
-        $uri = '/users/9/edit'; //Todo::A modifier
+        $user = $this->getEntity('user');
+        $uri = '/users/' . $user->getId() . '/edit';
         $this->loginWithoutCredentials($uri);
         $this->loginWithCredentials('user', $uri, Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');
