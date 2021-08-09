@@ -79,6 +79,12 @@ class UserEntityTest extends KernelTestCase
         $this->assertObjectHasAttribute('roles', $this->getEntity());
     }
 
+    public function testGetid()
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => 'user']);
+        $this->assertEquals($user->getId(), 7);
+    }
+
     public function testInvalidBlankUsername()
     {
         $this->assertHasErrors($this->getEntity()->setUsername(''), 1);
