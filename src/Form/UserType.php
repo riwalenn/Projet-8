@@ -27,7 +27,7 @@ class UserType extends AbstractType
             ])
             ->add('password', RepeatedType::class, [
                 'type'              => PasswordType::class,
-                'invalid_message'   => 'Les deux mots de passe doivent correspondre.',
+//                'invalid_message'   => 'Les deux mots de passe doivent correspondre.',
                 'required'          => true,
                 'first_options'     => ['label' => 'Mot de passe',
                 'attr' => [

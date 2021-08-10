@@ -5,7 +5,11 @@ namespace App\Tests\Controller;
 
 use App\Entity\User;
 use App\Tests\NeedLogin;
+use Doctrine\Persistence\ObjectManager;
+use Exception;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserControllerTest extends WebTestCase
@@ -14,9 +18,13 @@ class UserControllerTest extends WebTestCase
 
     const URIS = [
         'list'          => '/users',
-        'editUser'      => '/users/1/edit',
         'createUser'    => '/users/create',
     ];
+
+    /**
+     * @var ObjectManager
+     */
+    protected $entityManager;
 
     protected function getEntity($username)
     {
@@ -61,6 +69,31 @@ class UserControllerTest extends WebTestCase
             ->setRoles(array('ROLE_USER'));
     }
 
+    /**
+     * @throws Exception
+     */
+    protected function setCommand($string): int
+    {
+        $kernel = static::createKernel(['APP_ENV' => 'test']);
+        $application =new Application($kernel);
+        $application->setAutoExit(false);
+        return $application->run(new StringInput(sprintf('%s --quiet', $string)));
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function setUp(): void
+    {
+        $this->setCommand('doctrine:database:drop --force');
+        $this->setCommand('doctrine:database:create');
+        $this->setCommand('doctrine:schema:create');
+        $this->setCommand('doctrine:fixtures:load');
+        $kernel = self::bootKernel();
+        $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
+        $this->setCommand('app:link-anonymous ');
+    }
+
     public function testUrisList()
     {
         $uris = self::URIS;
@@ -77,9 +110,28 @@ class UserControllerTest extends WebTestCase
         $this->loginWithoutCredentials($uris["createUser"]);
         $this->loginWithCredentials('user', $uris["createUser"], Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');
-        $this->loginWithCredentials('admin', $uris["createUser"]);
-        $this->assertSelectorExists('h1');
 
+    }
+
+    public function testUrisCreateWithAdminCredentials()
+    {
+        $uris = self::URIS;
+        $client = static::createClient();
+        $user = $this->getEntity('admin');
+        $this->login($client, $user);
+
+        $crawler = $client->request('GET', $uris['createUser']);
+        $form = $crawler->selectButton('Ajouter')->form();
+
+        $form['user[username]'] = 'test_username';
+        $form['user[password][first]'] = 'test_password';
+        $form['user[password][second]'] = 'test_password';
+        $form['user[email]'] = 'test_email@gmail.com';
+        $form['user[roles]'] = 'ROLE_USER';
+
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testCreateBadUser()
@@ -94,15 +146,35 @@ class UserControllerTest extends WebTestCase
         $this->assertFalse($user->getEmail() !== "user@gmail.com", "Cet email existe déjà.");
     }
 
-    public function testUrisEdit()
+    public function testUrisEditWithoutCredentials()
     {
-        /*$user = $this->getEntity('anonyme');
-        die(dump($user));*/
-        $uri = '/users/9/edit'; //Todo::A modifier
+        $user = $this->getEntity('user');
+        $uri = '/users/' . $user->getId() . '/edit';
         $this->loginWithoutCredentials($uri);
         $this->loginWithCredentials('user', $uri, Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');
-        $this->loginWithCredentials('admin', $uri);
-        $this->assertSelectorExists('h1');
+    }
+
+    public function testUrisEditWithAdminCredentials()
+    {
+        $user = $this->getEntity('user');
+        $uri = '/users/' . $user->getId() . '/edit';
+
+        $client = static::createClient();
+        $user = $this->getEntity('admin');
+        $this->login($client, $user);
+
+        $crawler = $client->request('GET', $uri);
+        $form = $crawler->selectButton('Modifier')->form();
+
+        $form['user[username]'] = 'test_username';
+        $form['user[password][first]'] = 'test_password';
+        $form['user[password][second]'] = 'test_password';
+        $form['user[email]'] = 'test_email@gmail.com';
+        $form['user[roles]'] = 'ROLE_USER';
+
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 }

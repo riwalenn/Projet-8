@@ -18,4 +18,3 @@ You can contribute to Todo & Co by adding new feature, adding some more useful t
 ##  Commit and create a pull request
 1.  Commit your changes ([About commits](https://docs.github.com/en/github/committing-changes-to-your-project/creating-and-editing-commits/about-commits))
 2.  [Create a pull request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) // [Create a pull request from a fork](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork) - [About pull request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
-

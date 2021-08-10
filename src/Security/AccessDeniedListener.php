@@ -44,27 +44,25 @@ class AccessDeniedListener implements EventSubscriberInterface
         $response = new Response();
         $response->setContent($message);
 
-        if ($exception instanceof HttpException) {
-//            $pageLogin = new RedirectResponse($this->router->generate('login'));
-//            $homepage = new RedirectResponse($this->router->generate('homepage'));
-            switch ($exception) {
-                case $exception instanceof NotFoundHttpException :
-                    $response->setStatusCode($exception->getStatusCode());
-                    $response->setContent("Ressource non trouvée");
-                    break;
-
-                case $exception instanceof UnauthorizedHttpException :
-                    $response->setStatusCode($exception->getStatusCode());
-                    $response->setContent("Vous n'avez pas les autorisations pour accéder à cette page.");
-                    break;
-
-                default:
-                    $response->setStatusCode($exception->getStatusCode());
-                    $response->headers->replace($exception->getHeaders());
-                    break;
-            }
-        } else {
+        if (!$exception instanceof HttpException) {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        switch ($exception) {
+            case $exception instanceof NotFoundHttpException :
+                $response->setStatusCode($exception->getStatusCode());
+                $response->setContent("Ressource non trouvée");
+                break;
+
+            case $exception instanceof UnauthorizedHttpException :
+                $response->setStatusCode($exception->getStatusCode());
+                $response->setContent("Vous n'avez pas les autorisations pour accéder à cette page.");
+                break;
+
+            default:
+                $response->setStatusCode($exception->getStatusCode());
+                $response->headers->replace($exception->getHeaders());
+                break;
         }
     }
 }
