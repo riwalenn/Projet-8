@@ -110,9 +110,28 @@ class UserControllerTest extends WebTestCase
         $this->loginWithoutCredentials($uris["createUser"]);
         $this->loginWithCredentials('user', $uris["createUser"], Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');
-        $this->loginWithCredentials('admin', $uris["createUser"]);
-        $this->assertSelectorExists('h1');
 
+    }
+
+    public function testUrisCreateWithAdminCredentials()
+    {
+        $uris = self::URIS;
+        $client = static::createClient();
+        $user = $this->getEntity('admin');
+        $this->login($client, $user);
+
+        $crawler = $client->request('GET', $uris['createUser']);
+        $form = $crawler->selectButton('Ajouter')->form();
+
+        $form['user[username]'] = 'test_username';
+        $form['user[password][first]'] = 'test_password';
+        $form['user[password][second]'] = 'test_password';
+        $form['user[email]'] = 'test_email@gmail.com';
+        $form['user[roles]'] = 'ROLE_USER';
+
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testCreateBadUser()
@@ -127,14 +146,35 @@ class UserControllerTest extends WebTestCase
         $this->assertFalse($user->getEmail() !== "user@gmail.com", "Cet email existe déjà.");
     }
 
-    public function testUrisEdit()
+    public function testUrisEditWithoutCredentials()
     {
         $user = $this->getEntity('user');
         $uri = '/users/' . $user->getId() . '/edit';
         $this->loginWithoutCredentials($uri);
         $this->loginWithCredentials('user', $uri, Response::HTTP_FORBIDDEN);
         $this->assertSelectorExists('h3');
-        $this->loginWithCredentials('admin', $uri);
-        $this->assertSelectorExists('h1');
+    }
+
+    public function testUrisEditWithAdminCredentials()
+    {
+        $user = $this->getEntity('user');
+        $uri = '/users/' . $user->getId() . '/edit';
+
+        $client = static::createClient();
+        $user = $this->getEntity('admin');
+        $this->login($client, $user);
+
+        $crawler = $client->request('GET', $uri);
+        $form = $crawler->selectButton('Modifier')->form();
+
+        $form['user[username]'] = 'test_username';
+        $form['user[password][first]'] = 'test_password';
+        $form['user[password][second]'] = 'test_password';
+        $form['user[email]'] = 'test_email@gmail.com';
+        $form['user[roles]'] = 'ROLE_USER';
+
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 }
