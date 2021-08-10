@@ -115,20 +115,80 @@ class TaskControllerTest extends WebTestCase
         $this->testWithCredentials('admin', $uris["listDone"]);
     }
 
-    public function testUriCreate()
+    public function testUriCreateWithoutCredentials()
     {
         $uris = self::URIS;
         $this->testWithoutCredentials($uris["createTask"]);
-        $this->testWithCredentials('user', $uris["createTask"]);
-        $this->testWithCredentials('admin', $uris["createTask"]);
     }
 
-    public function testUriEdit()
+    public function testUriCreateWithUserCredentials()
+    {
+        $uris = self::URIS;
+        $client = static::createClient();
+        $user = $this->getEntity('user');
+        $this->login($client, $user);
+
+        $crawler = $client->request('GET', $uris["createTask"]);
+        $form = $crawler->selectButton('Ajouter')->form();
+        $form['task[title]'] = 'task_title';
+        $form['task[content]'] = 'task_content';
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+    }
+
+    public function testUriCreateWithAdminCredentials()
+    {
+        $uris = self::URIS;
+        $client = static::createClient();
+        $user = $this->getEntity('admin');
+        $this->login($client, $user);
+
+        $crawler = $client->request('GET', $uris["createTask"]);
+        $form = $crawler->selectButton('Ajouter')->form();
+        $form['task[title]'] = 'task_title';
+        $form['task[content]'] = 'task_content';
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+    }
+
+    public function testUriEditWithoutCredentials()
     {
         $uris = self::URIS;
         $this->testWithoutCredentials($uris["editTask"]);
-        $this->testWithCredentials('user', $uris["editTask"]);
-        $this->testWithCredentials('admin', $uris["editTask"]);
+    }
+
+    public function testUriEditWithUserCredentials()
+    {
+        $uris = self::URIS;
+        $client = static::createClient();
+        $user = $this->getEntity('user');
+        $this->login($client, $user);
+
+        $crawler = $client->request('GET', $uris["editTask"]);
+        $form = $crawler->selectButton('Modifier')->form();
+        $form['task[title]'] = 'task_title';
+        $form['task[content]'] = 'task_content';
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+    }
+
+    public function testUriEditWithAdminCredentials()
+    {
+        $uris = self::URIS;
+        $client = static::createClient();
+        $user = $this->getEntity('admin');
+        $this->login($client, $user);
+
+        $crawler = $client->request('GET', $uris["editTask"]);
+        $form = $crawler->selectButton('Modifier')->form();
+        $form['task[title]'] = 'task_title';
+        $form['task[content]'] = 'task_content';
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
     }
 
     public function testUriToggle()
