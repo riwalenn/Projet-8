@@ -1,5 +1,7 @@
 # Projet-8 (Todo & Co)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d01b1351c8f248c68bcaa61dfa523e08)](https://app.codacy.com/gh/riwalenn/Projet-8?utm_source=github.com&utm_medium=referral&utm_content=riwalenn/Projet-8&utm_campaign=Badge_Grade_Settings)
+
 EN - Projet n°8 created for OpenClassrooms and Back-end Developer Path
 
 ## Built With
