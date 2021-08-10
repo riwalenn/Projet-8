@@ -1,12 +1,12 @@
-#   Contributing Todo & Co
+# Contributing Todo & Co
 
 You can contribute to Todo & Co by adding new feature, adding some more useful tests, updating the HTML template or updating the documentation.
 
-##  Requirements
+## Requirements
 *   A github account
 *   git installed on your computer ([How to install it](https://docs.github.com/en/get-started/quickstart/set-up-git)).
 
-##  Setup Local Project
+## Setup Local Project
 1.  [Create a fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) of this project.
 2.  Clone the project: https://github.com/riwalenn/Projet-8.git
 3.  Install the dependencies : composer install on your console
