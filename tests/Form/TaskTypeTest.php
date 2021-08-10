@@ -19,15 +19,15 @@ class TaskTypeTest extends TypeTestCase
         $task->setTitle($formData['title']);
         $task->setContent($formData['content']);
 
-        $task_to_compare = new Task();
-        $form = $this->factory->create(TaskType::class, $task_to_compare);
+        $taskToCompare = new Task();
+        $form = $this->factory->create(TaskType::class, $taskToCompare);
         $form->submit($formData);
 
         // This check ensures there are no transformation failures
         $this->assertTrue($form->isSynchronized());
 
         // check that $formData was modified as expected when the form was submitted
-        $this->assertEquals($task_to_compare->getTitle(), $task->getTitle());
-        $this->assertEquals($task_to_compare->getContent(), $task->getContent());
+        $this->assertEquals($taskToCompare->getTitle(), $task->getTitle());
+        $this->assertEquals($taskToCompare->getContent(), $task->getContent());
     }
 }

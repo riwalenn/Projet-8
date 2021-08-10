@@ -61,9 +61,9 @@ class TaskControllerTest extends WebTestCase
     /**
      * @param $role
      * @param $uri
-     * @param int $http_response
+     * @param int $httpResponse
      */
-    protected function testWithCredentials($role, $uri, int $http_response = Response::HTTP_OK)
+    protected function testWithCredentials($role, $uri, int $httpResponse = Response::HTTP_OK)
     {
         $client = static::createClient();
         $user = $this->getEntity($role);
@@ -71,7 +71,7 @@ class TaskControllerTest extends WebTestCase
 
         $client->request('GET', $uri);
 
-        $this->assertResponseStatusCodeSame($http_response);
+        $this->assertResponseStatusCodeSame($httpResponse);
     }
 
     /**

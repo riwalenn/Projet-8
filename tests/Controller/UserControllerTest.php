@@ -47,9 +47,9 @@ class UserControllerTest extends WebTestCase
     /**
      * @param $username
      * @param $uri
-     * @param int $http_response
+     * @param int $httpResponse
      */
-    protected function loginWithCredentials($username, $uri, int $http_response = Response::HTTP_OK)
+    protected function loginWithCredentials($username, $uri, int $httpResponse = Response::HTTP_OK)
     {
         $client = static::createClient();
         $user = $this->getEntity($username);
@@ -57,7 +57,7 @@ class UserControllerTest extends WebTestCase
 
         $client->request('GET', $uri);
 
-        $this->assertResponseStatusCodeSame($http_response);
+        $this->assertResponseStatusCodeSame($httpResponse);
     }
 
     protected function newEntity(): User

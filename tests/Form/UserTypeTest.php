@@ -23,21 +23,21 @@ class UserTypeTest extends TypeTestCase
         $user->setEmail($formData['email']);
         $user->setRoles($formData['roles']);
 
-        $user_to_compare = new User();
-        $user_to_compare->setUsername($formData['username']);
-        $user_to_compare->setPassword($formData['password']);
-        $user_to_compare->setEmail($formData['email']);
-        $user_to_compare->setRoles($formData['roles']);
-        $form = $this->factory->create(UserType::class, $user_to_compare);
+        $userToCompare = new User();
+        $userToCompare->setUsername($formData['username']);
+        $userToCompare->setPassword($formData['password']);
+        $userToCompare->setEmail($formData['email']);
+        $userToCompare->setRoles($formData['roles']);
+        $form = $this->factory->create(UserType::class, $userToCompare);
         $form->submit($formData);
 
         // This check ensures there are no transformation failures
         $this->assertTrue($form->isSynchronized());
 
         // check that $formData was modified as expected when the form was submitted
-        $this->assertEquals($user_to_compare->getUsername(), $user->getUsername());
-        $this->assertEquals($user_to_compare->getPassword(), $user->getPassword());
-        $this->assertEquals($user_to_compare->getEmail(), $user->getEmail());
-        $this->assertEquals($user_to_compare->getRoles(), $user->getRoles());
+        $this->assertEquals($userToCompare->getUsername(), $user->getUsername());
+        $this->assertEquals($userToCompare->getPassword(), $user->getPassword());
+        $this->assertEquals($userToCompare->getEmail(), $user->getEmail());
+        $this->assertEquals($userToCompare->getRoles(), $user->getRoles());
     }
 }

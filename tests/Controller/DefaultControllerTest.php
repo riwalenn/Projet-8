@@ -47,9 +47,9 @@ class DefaultControllerTest extends WebTestCase
     /**
      * @param $role
      * @param $uri
-     * @param int $http_response
+     * @param int $httpResponse
      */
-    protected function LoginWithCredentials($role, $uri, int $http_response = Response::HTTP_OK)
+    protected function loginWithCredentials($role, $uri, int $httpResponse = Response::HTTP_OK)
     {
         $client = static::createClient();
         $user = $this->getEntity($role);
@@ -57,7 +57,7 @@ class DefaultControllerTest extends WebTestCase
 
         $client->request('GET', $uri);
 
-        $this->assertResponseStatusCodeSame($http_response);
+        $this->assertResponseStatusCodeSame($httpResponse);
     }
 
     public function testIndexWithoutCredentials()
@@ -72,7 +72,7 @@ class DefaultControllerTest extends WebTestCase
 
     public function testIndexWithUserCredentials()
     {
-        $this->LoginWithCredentials('user', '/');
+        $this->loginWithCredentials('user', '/');
 
         $this->assertSelectorTextContains('title', 'To Do List app');
         $this->assertSelectorNotExists('button', 'Créer un utilisateur');
@@ -80,7 +80,7 @@ class DefaultControllerTest extends WebTestCase
 
     public function testIndexWithAdminCredentials()
     {
-        $this->LoginWithCredentials('admin', '/');
+        $this->loginWithCredentials('admin', '/');
 
         $this->assertSelectorTextContains('.btn.btn-info', 'Liste des utilisateurs');
     }
