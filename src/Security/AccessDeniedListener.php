@@ -46,23 +46,23 @@ class AccessDeniedListener implements EventSubscriberInterface
 
         if (!$exception instanceof HttpException) {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        } else {
+            switch ($exception) {
+                case $exception instanceof NotFoundHttpException :
+                    $response->setStatusCode($exception->getStatusCode());
+                    $response->setContent("Ressource non trouvée");
+                    break;
 
-        switch ($exception) {
-            case $exception instanceof NotFoundHttpException :
-                $response->setStatusCode($exception->getStatusCode());
-                $response->setContent("Ressource non trouvée");
-                break;
+                case $exception instanceof UnauthorizedHttpException :
+                    $response->setStatusCode($exception->getStatusCode());
+                    $response->setContent("Vous n'avez pas les autorisations pour accéder à cette page.");
+                    break;
 
-            case $exception instanceof UnauthorizedHttpException :
-                $response->setStatusCode($exception->getStatusCode());
-                $response->setContent("Vous n'avez pas les autorisations pour accéder à cette page.");
-                break;
-
-            default:
-                $response->setStatusCode($exception->getStatusCode());
-                $response->headers->replace($exception->getHeaders());
-                break;
+                default:
+                    $response->setStatusCode($exception->getStatusCode());
+                    $response->headers->replace($exception->getHeaders());
+                    break;
+            }
         }
     }
 }
