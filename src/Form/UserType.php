@@ -51,16 +51,16 @@ class UserType extends AbstractType
                     'class'     => 'form-control'
                 ]])
             ->add('roles', ChoiceType::class, [
-                'mapped'    => false,
-                'label'     => 'Rôle',
-                'attr'      => [
-                    'aria-describedby' => 'basic-addon3',
-                    'class'     => 'form-control'
-                ],
-                'choices'   => [
-                    'Utilisateur'    => 'ROLE_USER',
+                'choices' => [
+                    'Utilisateur' => 'ROLE_USER',
                     'Administrateur' => 'ROLE_ADMIN'
                 ],
+                'attr'      => [
+                    'class'     => 'form-check'
+                ],
+                'expanded' => true,
+                'multiple' => true,
+                'label' => 'Rôles'
             ])
         ;
     }
