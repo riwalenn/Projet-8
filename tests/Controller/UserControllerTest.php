@@ -127,7 +127,7 @@ class UserControllerTest extends WebTestCase
         $form['user[password][first]'] = 'test_password';
         $form['user[password][second]'] = 'test_password';
         $form['user[email]'] = 'test_email@gmail.com';
-        $form['user[roles]'] = 'ROLE_USER';
+        $form['user[roles][0]'];
 
         $client->submit($form);
 
@@ -171,7 +171,7 @@ class UserControllerTest extends WebTestCase
         $form['user[password][first]'] = 'test_password';
         $form['user[password][second]'] = 'test_password';
         $form['user[email]'] = 'test_email@gmail.com';
-        $form['user[roles]'] = 'ROLE_USER';
+        $form['user[roles][0]'];
 
         $client->submit($form);
 
