@@ -15,6 +15,10 @@ You can contribute to Todo & Co by adding new feature, adding some more useful t
 6.  To have some initial dataset : php bin/console doctrine:fixtures:load
 7.  [Create a new branch](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-and-deleting-branches-within-your-repository)
 
+## Tests
+1.  Make sure the tests are ok.
+2.  If new entity / controller / etc... create new tests, please create tests aligned with the tests already present.
+
 ## Commit and create a pull request
 1.  Commit your changes ([About commits](https://docs.github.com/en/github/committing-changes-to-your-project/creating-and-editing-commits/about-commits))
 2.  [Create a pull request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) // [Create a pull request from a fork](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork) - [About pull request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
