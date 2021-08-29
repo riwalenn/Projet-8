@@ -17,7 +17,7 @@ You can contribute to Todo & Co by adding new feature, adding some more useful t
 
 ## Tests
 1.  Make sure the tests are ok.
-2.  If new entity / controller / etc... create new tests, please create tests aligned with the tests already present.
+2.  If new entity / controller / etc... create new tests, please create tests aligned with the tests already present. You can use the ([PHP unit manual](https://phpunit.readthedocs.io/fr/latest/index.html)) to help you
 
 ## Commit and create a pull request
 1.  Commit your changes ([About commits](https://docs.github.com/en/github/committing-changes-to-your-project/creating-and-editing-commits/about-commits))
